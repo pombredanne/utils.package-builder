@@ -22,7 +22,10 @@
     },
     "extra": {
     	"mouf": {
-		"logo": "logo.png"
+			"logo": "logo.png",
+			"require-admin": [
+    			"src/PackageBuilderAdmin.php"
+    		],
     	}
     }
 }
