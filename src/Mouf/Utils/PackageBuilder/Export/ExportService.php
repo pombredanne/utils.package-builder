@@ -15,6 +15,8 @@ class ExportService {
 	
 	private $outOfScopeInstances;
 	
+	private $usedConfigConstants = array();
+	
 	public function export(array $instanceNames, MoufManager $moufManager) {
 		$this->outOfScopeInstances = new \SplObjectStorage();
 		
@@ -68,10 +70,26 @@ class ExportService {
 			$bindCode = "// Let's bind instances together.\n".$bindCode;
 		}
 		
+		// Back to the top again with the config constants that needs declaring
+		$configCode = "";
+		if ($this->usedConfigConstants) {
+			$configManager = $moufManager->getConfigManager();
+			$constants = $configManager->getMergedConstants();
+			
+			$configCode = '$configManager = $moufManager->getConfigManager();'."\n";
+			$configCode .= '$constants = $configManager->getMergedConstants();'."\n";
+			foreach ($this->usedConfigConstants as $constant) {
+				$definition = $constants[$constant];
+				$configCode .= 'if (!isset($constants['.var_export($constant, true).'])) {'."\n\t";;
+				$configCode .= '$configManager->registerConstant('.var_export($constant, true).', '.var_export($definition['type'], true).', '.var_export($definition['defaultValue'], true).', '.var_export($definition['comment'], true).');'."\n";
+				$configCode .= '}'."\n";;
+			}
+		}
+		
 		$prepend = '$moufManager = MoufManager::getMoufManager();'."\n";
 		$append = "// Let's rewrite the MoufComponents.php file to save the component\n\$moufManager->rewriteMouf();\n";
 		
-		return $prepend."\n".$outOfScopeCode."\n".$instanceCode."\n".$bindCode."\n".$append;
+		return $prepend."\n".$configCode."\n".$outOfScopeCode."\n".$instanceCode."\n".$bindCode."\n".$append;
 		
 	}
 	
@@ -207,7 +225,18 @@ class ExportService {
 			
 			if ($propertyDescriptor->isValueSet($name) && $propertyDescriptor->getValue() !== null) {
 				$value = $propertyDescriptor->getValue();
+				if (!$instanceDescriptor->isAnonymous()) {
+					$bindCode .= 'if (!'.$this->instanceList[$instanceDescriptor].'->getConstructorArgumentProperty('.var_export($name, true).')->isValueSet()) {'."\n\t";
+				}
 				$bindCode .= $this->instanceList[$instanceDescriptor].'->getConstructorArgumentProperty('.var_export($name, true).')->setValue('.$this->getValueCode($value).');'."\n";
+				if ($propertyDescriptor->getOrigin() == 'config') {
+					$bindCode .= $this->instanceList[$instanceDescriptor].'->getConstructorArgumentProperty('.var_export($name, true).')->setOrigin("config");'."\n";
+					$this->usedConfigConstants[$value] = $value;
+				}
+				if (!$instanceDescriptor->isAnonymous()) {
+					$bindCode .= "}\n";
+				}
+				
 			}
 		}
 	
@@ -217,7 +246,17 @@ class ExportService {
 			
 			if ($propertyDescriptor->isValueSet($name) && $propertyDescriptor->getValue() !== null) {
 				$value = $propertyDescriptor->getValue();
+				if (!$instanceDescriptor->isAnonymous()) {
+					$bindCode .= 'if (!'.$this->instanceList[$instanceDescriptor].'->getConstructorArgumentProperty('.var_export($name, true).')->isValueSet()) {'."\n\t";
+				}
 				$bindCode .= $this->instanceList[$instanceDescriptor].'->getPublicFieldProperty('.var_export($name, true).')->setValue('.$this->getValueCode($value).');'."\n";
+				if ($propertyDescriptor->getOrigin() == 'config') {
+					$bindCode .= $this->instanceList[$instanceDescriptor].'->getPublicFieldProperty('.var_export($name, true).')->setOrigin("config");'."\n";
+					$this->usedConfigConstants[$value] = $value;
+				}
+				if (!$instanceDescriptor->isAnonymous()) {
+					$bindCode .= "}\n";
+				}
 			}
 		}
 	
@@ -227,7 +266,17 @@ class ExportService {
 			
 			if ($propertyDescriptor->isValueSet($name) && $propertyDescriptor->getValue() !== null) {
 				$value = $propertyDescriptor->getValue();
+				if (!$instanceDescriptor->isAnonymous()) {
+					$bindCode .= 'if (!'.$this->instanceList[$instanceDescriptor].'->getConstructorArgumentProperty('.var_export($name, true).')->isValueSet()) {'."\n\t";
+				}
 				$bindCode .= $this->instanceList[$instanceDescriptor].'->getSetterProperty('.var_export($name, true).')->setValue('.$this->getValueCode($value).');'."\n";
+				if ($propertyDescriptor->getOrigin() == 'config') {
+					$bindCode .= $this->instanceList[$instanceDescriptor].'->getSetterProperty('.var_export($name, true).')->setOrigin("config");'."\n";
+					$this->usedConfigConstants[$value] = $value;
+				}
+				if (!$instanceDescriptor->isAnonymous()) {
+					$bindCode .= "}\n";
+				}
 			}
 		}
 		return $bindCode;
@@ -253,7 +302,7 @@ class ExportService {
 			foreach ($value as $key=>$val) {
 				$code .= var_export($key, true);
 				$code .= " => ";
-				$code .= $this->getValueCode($val);
+				$code .= $this->getValueCode($val).", ";
 			}
 			$code .= ")";
 			return $code;
