@@ -1,4 +1,4 @@
-<?php /* @var $this Mouf\PackageBuilder\Expor\ExportController */ ?>
+<?php /* @var $this Mouf\Utils\PackageBuilder\Expor\ExportController */ ?>
 
 <h1>Export instances</h1>
 
@@ -6,11 +6,16 @@
 instances into PHP code. In the form below, fill the list of instances you want to export (one per line).
 Anonymous instances attached to your instances will also be exported.</p>
 
-<form action="export">
+<form>
 	<label>Instances list</label>
-	<textarea type="text" name="instances"></textarea>
+	<textarea type="text" name="instances"><?php echo $this->instances; ?></textarea>
 	<span class="help-block">One instance name per line.</span>
 
 	<button type="submit" class="btn btn-primary">Generate PHP code</button>
 </form>
 
+<?php if ($this->generatedCode): ?>
+<h2>Generated export code</h2>
+
+<pre><code><?php echo htmlentities($this->generatedCode, ENT_QUOTES, 'utf-8'); ?></code></pre>
+<?php endif; ?>

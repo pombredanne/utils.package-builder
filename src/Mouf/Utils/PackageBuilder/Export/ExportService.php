@@ -69,8 +69,9 @@ class ExportService {
 		}
 		
 		$prepend = '$moufManager = MoufManager::getMoufManager();'."\n";
+		$append = "// Let's rewrite the MoufComponents.php file to save the component\n\$moufManager->rewriteMouf();\n";
 		
-		echo $prepend."\n".$outOfScopeCode."\n".$instanceCode."\n".$bindCode;
+		return $prepend."\n".$outOfScopeCode."\n".$instanceCode."\n".$bindCode."\n".$append;
 		
 	}
 	

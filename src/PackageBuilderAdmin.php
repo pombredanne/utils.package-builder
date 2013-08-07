@@ -4,7 +4,7 @@ use Mouf\MoufUtils;
 
 MoufUtils::registerMainMenu('utilsMainMenu', 'Utils', null, 'mainMenu', 200);
 MoufUtils::registerMenuItem('utilsPackageBuilderInterfaceMenu', 'Package builder', null, 'utilsMainMenu', 60);
-MoufUtils::registerMenuItem('utilsCacheInterfacePurgeAllCachesMenuItem', 'Export instances', 'export/', 'utilsPackageBuilderInterfaceMenu', 10);
+MoufUtils::registerMenuItem('utilsPackageBuilderExportInstacesMenuItem', 'Export instances', 'export/', 'utilsPackageBuilderInterfaceMenu', 10);
 
 $moufManager = MoufManager::getMoufManager();
 

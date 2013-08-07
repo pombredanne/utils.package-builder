@@ -26,12 +26,21 @@ class ExportController extends Controller {
 	 */
 	public $content;
 	
+	protected $instances;
+	protected $generatedCode;
+	
 	/**
 	 * Admin page used to export instances.
 	 *
 	 * @Action
 	 */
-	public function index($selfedit="false") {
+	public function index($instances = "", $selfedit="false") {
+		$this->instances = $instances;
+		$this->generatedCode = "";
+		if ($instances) {
+			$this->export($instances, $selfedit);
+		}
+		
 		$this->content->addFile(dirname(__FILE__)."/../../../../views/exportForm.php", $this);
 		$this->template->toHtml();
 	}
@@ -39,7 +48,6 @@ class ExportController extends Controller {
 	/**
 	 * This action generates the objects from the SQL query and creates a new SELECT instance.
 	 *
-	 * @Action
 	 * @param string $instances
 	 * @param string $selfedit
 	 */
@@ -60,7 +68,7 @@ class ExportController extends Controller {
 		}
 
 		$exportService = new ExportService();
-		$exportService->export($cleaninstancesList, $moufManager);
+		$this->generatedCode = $exportService->export($cleaninstancesList, $moufManager);
 	}
 	
 }
