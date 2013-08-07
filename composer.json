@@ -1,0 +1,29 @@
+{
+    "name": "mouf/security.userservice.extensions",
+    "description": "This package contains a set of extensions over Mouf's userservice.",
+    "keywords": ["security", "user", "user management", "mouf"],
+    "homepage": "https://github.com/thecodingmachine/security.userservice",
+    "type": "mouf-library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "David Négrier",
+            "email": "d.negrier@thecodingmachine.com",
+            "homepage": "http://mouf-php.com"
+        }
+    ],
+    "require": {
+    	"php": ">=5.3.0",
+        "mouf/security.userservice": "2.*"
+    },
+    "autoload": {
+        "psr-0": {
+            "Mouf": "src/"
+        }
+    },
+    "extra": {
+    	"mouf": {
+		"logo": "logo.png"
+    	}
+    }
+}
