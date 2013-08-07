@@ -25,7 +25,7 @@
 			"logo": "logo.png",
 			"require-admin": [
     			"src/PackageBuilderAdmin.php"
-    		],
+    		]
     	}
     }
 }
