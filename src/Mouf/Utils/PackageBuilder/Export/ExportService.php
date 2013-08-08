@@ -55,7 +55,7 @@ class ExportService {
 		
 		// Now, the $outOfScopeInstances are filled. Let's put them at the top.
 		foreach ($this->outOfScopeInstances as $instance) {
-			$outOfScopeCode .= $instanceList[$instance].' = $moufManager->getInstance('.var_export($instance->getIdentifierName(), true).');'."\n";
+			$outOfScopeCode .= $instanceList[$instance].' = $moufManager->getInstanceDescriptor('.var_export($instance->getIdentifierName(), true).');'."\n";
 		}
 		
 		if ($outOfScopeCode) {
@@ -247,7 +247,7 @@ class ExportService {
 			if ($propertyDescriptor->isValueSet($name) && $propertyDescriptor->getValue() !== null) {
 				$value = $propertyDescriptor->getValue();
 				if (!$instanceDescriptor->isAnonymous()) {
-					$bindCode .= 'if (!'.$this->instanceList[$instanceDescriptor].'->getConstructorArgumentProperty('.var_export($name, true).')->isValueSet()) {'."\n\t";
+					$bindCode .= 'if (!'.$this->instanceList[$instanceDescriptor].'->getPublicFieldProperty('.var_export($name, true).')->isValueSet()) {'."\n\t";
 				}
 				$bindCode .= $this->instanceList[$instanceDescriptor].'->getPublicFieldProperty('.var_export($name, true).')->setValue('.$this->getValueCode($value).');'."\n";
 				if ($propertyDescriptor->getOrigin() == 'config') {
@@ -267,7 +267,7 @@ class ExportService {
 			if ($propertyDescriptor->isValueSet($name) && $propertyDescriptor->getValue() !== null) {
 				$value = $propertyDescriptor->getValue();
 				if (!$instanceDescriptor->isAnonymous()) {
-					$bindCode .= 'if (!'.$this->instanceList[$instanceDescriptor].'->getConstructorArgumentProperty('.var_export($name, true).')->isValueSet()) {'."\n\t";
+					$bindCode .= 'if (!'.$this->instanceList[$instanceDescriptor].'->getSetterProperty('.var_export($name, true).')->isValueSet()) {'."\n\t";
 				}
 				$bindCode .= $this->instanceList[$instanceDescriptor].'->getSetterProperty('.var_export($name, true).')->setValue('.$this->getValueCode($value).');'."\n";
 				if ($propertyDescriptor->getOrigin() == 'config') {
