@@ -80,7 +80,7 @@ class ExportService {
 			$configCode .= '$constants = $configManager->getMergedConstants();'."\n";
 			foreach ($this->usedConfigConstants as $constant) {
 				$definition = $constants[$constant];
-				$configCode .= 'if (!isset($constants['.var_export($constant, true).'])) {'."\n\t";;
+				$configCode .= 'if ($configManager->getConstantDefinition('.var_export($constant, true).') === null) {'."\n\t";;
 				$configCode .= '$configManager->registerConstant('.var_export($constant, true).', '.var_export($definition['type'], true).', '.var_export($definition['defaultValue'], true).', '.var_export($definition['comment'], true).');'."\n";
 				$configCode .= '}'."\n";;
 			}
