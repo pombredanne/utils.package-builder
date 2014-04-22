@@ -40,6 +40,10 @@ class ExportService {
 			} else {
 				$instanceCode .= $instanceList[$instance].' = $moufManager->createInstance('.var_export($instance->getClassName(), true).');'."\n";
 			}
+			// If this is a PHP code instance, let's put the code right now.
+			if ($instance->getType() == MoufInstanceDescriptor::TYPE_PHP) {
+				$instanceCode .= $instanceList[$instance].'->setCode('.var_export($instance->getCode(), true).')';
+			}
 		}
 		
 		$bindCode = "";
@@ -85,7 +89,7 @@ class ExportService {
 				$configCode .= '}'."\n";;
 			}
 		}
-		
+	
 		$prepend = '$moufManager = MoufManager::getMoufManager();'."\n";
 		$append = "// Let's rewrite the MoufComponents.php file to save the component\n\$moufManager->rewriteMouf();\n";
 		
@@ -131,6 +135,10 @@ class ExportService {
 	 * @return \SplObjectStorage
 	 */
 	public function getAnonymousAttachedInstances(MoufInstanceDescriptor $instanceDescriptor) {
+		if ($instanceDescriptor->getType() == MoufInstanceDescriptor::TYPE_PHP) {
+			// We do not analyze dependencies inside a PHP instance.
+			return new \SplObjectStorage();
+		}
 		$classDescriptor = $instanceDescriptor->getClassDescriptor();
 		$result = new \SplObjectStorage();
 		foreach ($classDescriptor->getInjectablePropertiesByConstructor() as $name=>$property) {
@@ -217,6 +225,12 @@ class ExportService {
 	 */
 	public function getBindCode(MoufInstanceDescriptor $instanceDescriptor) {
 		$bindCode = "";
+		
+		if ($instanceDescriptor->getType() == MoufInstanceDescriptor::TYPE_PHP) {
+			// No bind code for PHP instances.
+			return $bindCode;
+		}
+		
 		$classDescriptor = $instanceDescriptor->getClassDescriptor();
 		$result = new \SplObjectStorage();
 		foreach ($classDescriptor->getInjectablePropertiesByConstructor() as $name=>$property) {
