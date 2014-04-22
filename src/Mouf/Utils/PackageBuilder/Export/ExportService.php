@@ -42,7 +42,7 @@ class ExportService {
 			}
 			// If this is a PHP code instance, let's put the code right now.
 			if ($instance->getType() == MoufInstanceDescriptor::TYPE_PHP) {
-				$instanceCode .= $instanceList[$instance].'->setCode('.var_export($instance->getCode(), true).')';
+				$instanceCode .= $instanceList[$instance].'->setCode('.var_export($instance->getCode(), true).');';
 			}
 		}
 		
