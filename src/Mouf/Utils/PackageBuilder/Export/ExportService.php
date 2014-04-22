@@ -36,7 +36,8 @@ class ExportService {
 		foreach ($instanceList as $instance) {
 			/* @var $instance MoufInstanceDescriptor */
 			if (!$instance->isAnonymous()) {
-				$instanceCode .= $instanceList[$instance].' = InstallUtils::getOrCreateInstance('.var_export($instance->getName(), true).', '.var_export($instance->getClassName(), true).', $moufManager);'."\n";
+				$className = ($instance->getType() == MoufInstanceDescriptor::TYPE_PHP)?null:$instance->getClassName();
+				$instanceCode .= $instanceList[$instance].' = InstallUtils::getOrCreateInstance('.var_export($instance->getName(), true).', '.var_export($className, true).', $moufManager);'."\n";
 			} else {
 				$instanceCode .= $instanceList[$instance].' = $moufManager->createInstance('.var_export($instance->getClassName(), true).');'."\n";
 			}
