@@ -245,8 +245,11 @@ class ExportService {
 				}
 				$bindCode .= $this->instanceList[$instanceDescriptor].'->getConstructorArgumentProperty('.var_export($name, true).')->setValue('.$this->getValueCode($value).');'."\n";
 				if ($propertyDescriptor->getOrigin() == 'config') {
-					$bindCode .= $this->instanceList[$instanceDescriptor].'->getConstructorArgumentProperty('.var_export($name, true).')->setOrigin("config");'."\n";
+					$bindCode .= "\t".$this->instanceList[$instanceDescriptor].'->getConstructorArgumentProperty('.var_export($name, true).')->setOrigin("'.$propertyDescriptor->getOrigin().'");'."\n";
 					$this->usedConfigConstants[$value] = $value;
+				}
+				if ($propertyDescriptor->getOrigin() == 'php') {
+					$bindCode .= "\t".$this->instanceList[$instanceDescriptor].'->getConstructorArgumentProperty('.var_export($name, true).')->setOrigin("php");'."\n";
 				}
 				if (!$instanceDescriptor->isAnonymous()) {
 					$bindCode .= "}\n";
@@ -266,8 +269,11 @@ class ExportService {
 				}
 				$bindCode .= $this->instanceList[$instanceDescriptor].'->getPublicFieldProperty('.var_export($name, true).')->setValue('.$this->getValueCode($value).');'."\n";
 				if ($propertyDescriptor->getOrigin() == 'config') {
-					$bindCode .= $this->instanceList[$instanceDescriptor].'->getPublicFieldProperty('.var_export($name, true).')->setOrigin("config");'."\n";
+					$bindCode .= "\t".$this->instanceList[$instanceDescriptor].'->getPublicFieldProperty('.var_export($name, true).')->setOrigin("config");'."\n";
 					$this->usedConfigConstants[$value] = $value;
+				}
+				if ($propertyDescriptor->getOrigin() == 'php') {
+					$bindCode .= "\t".$this->instanceList[$instanceDescriptor].'->getPublicFieldProperty('.var_export($name, true).')->setOrigin("php");'."\n";
 				}
 				if (!$instanceDescriptor->isAnonymous()) {
 					$bindCode .= "}\n";
@@ -286,8 +292,11 @@ class ExportService {
 				}
 				$bindCode .= $this->instanceList[$instanceDescriptor].'->getSetterProperty('.var_export($name, true).')->setValue('.$this->getValueCode($value).');'."\n";
 				if ($propertyDescriptor->getOrigin() == 'config') {
-					$bindCode .= $this->instanceList[$instanceDescriptor].'->getSetterProperty('.var_export($name, true).')->setOrigin("config");'."\n";
+					$bindCode .= "\t".$this->instanceList[$instanceDescriptor].'->getSetterProperty('.var_export($name, true).')->setOrigin("config");'."\n";
 					$this->usedConfigConstants[$value] = $value;
+				}
+				if ($propertyDescriptor->getOrigin() == 'php') {
+					$bindCode .= "\t".$this->instanceList[$instanceDescriptor].'->getSetterProperty('.var_export($name, true).')->setOrigin("php");'."\n";
 				}
 				if (!$instanceDescriptor->isAnonymous()) {
 					$bindCode .= "}\n";
